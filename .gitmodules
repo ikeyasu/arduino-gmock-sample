@@ -1,0 +1,9 @@
+[submodule "test/gmock"]
+	path = test/gmock
+	url = https://chromium.googlesource.com/external/gmock
+[submodule "test/googletest"]
+	path = test/googletest
+	url = https://chromium.googlesource.com/external/googletest
+[submodule "test/arduino-mock"]
+	path = test/arduino-mock
+	url = git@github.com:ikeyasu/arduino-mock.git
