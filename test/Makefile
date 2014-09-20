@@ -61,7 +61,8 @@ GMOCK_HEADERS = $(GMOCK_DIR)/include/gmock/*.h \
 all : $(TESTS)
 
 clean :
-	rm -f $(TESTS) gmock.a gtest_main.a gmock_main.a *.o
+	rm -f $(TESTS) gmock.a gtest_main.a gmock_main.a \
+			arduino_mock_all.a *.o
 
 # Builds gtest.a and gtest_main.a.
 
@@ -93,9 +94,9 @@ gmock.a : gmock-all.o gtest-all.o
 gmock_main.a : gmock-all.o gtest-all.o gmock_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-# Builds a test.  A test should link with either gtest.a or
-# gtest_main.a, depending on whether it defines its own main()
-# function.
+# Builds Arduino mocks.
+arduino_mock_all.a : arduino.o Serial.o
+	$(AR) $(ARFLAGS) $@ $^
 
 arduino.o :  $(MOCK_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(ARDUINO_MOCK_DIR) $(CXXFLAGS) -c \
@@ -105,6 +106,10 @@ Serial.o: $(MOCK_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(ARDUINO_MOCK_DIR) $(CXXFLAGS) -c \
 		$(ARDUINO_MOCK_DIR)/Serial.cpp
 
+# Builds a test.  A test should link with either gtest.a or
+# gtest_main.a, depending on whether it defines its own main()
+# function.
+
 DigitalReadSerial_unittest.o : $(USER_DIR)/DigitalReadSerial_unittest.cc \
 				../DigitalReadSerial.ino \
 				$(GTEST_HEADERS)
@@ -112,6 +117,5 @@ DigitalReadSerial_unittest.o : $(USER_DIR)/DigitalReadSerial_unittest.cc \
 
 DigitalReadSerial_unittest : DigitalReadSerial_unittest.o \
 				gmock_main.a  \
-				arduino.o \
-				Serial.o
+				arduino_mock_all.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
