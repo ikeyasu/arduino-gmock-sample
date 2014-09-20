@@ -26,13 +26,13 @@ GMOCK_DIR = ./gmock
 ARDUINO_MOCK_DIR = ./arduino-mock
 
 # Where to find user code.
-USER_DIR = .
+TEST_DIR = .
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
 CPPFLAGS += -isystem $(GTEST_DIR)/include -isystem $(GMOCK_DIR)/include \
-		-I$ARDUINO_MOCK_DIR
+		-I$(ARDUINO_MOCK_DIR)/include
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra -pthread \
@@ -69,7 +69,6 @@ clean :
 # Usually you shouldn't tweak such internal variables, indicated by a
 # trailing _.
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
-MOCK_SRCS_ = $(ARDUINO_MOCK_DIR)/*.h #$(ARDUINO_MOCK_DIR)/*.cpp 
 
 # For simplicity and to avoid depending on implementation details of
 # Google Mock and Google Test, the dependencies specified below are
@@ -95,25 +94,32 @@ gmock_main.a : gmock-all.o gtest-all.o gmock_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
 # Builds Arduino mocks.
-arduino_mock_all.a : arduino.o Serial.o
+arduino_mock_all.a : arduino.o serial.o spark.o
 	$(AR) $(ARFLAGS) $@ $^
 
-arduino.o :  $(MOCK_SRCS_)
+arduino.o : $(ARDUINO_MOCK_DIR)/include/arduino-mock/arduino.h \
+		$(ARDUINO_MOCK_DIR)/src/arduino.cc
 	$(CXX) $(CPPFLAGS) -I$(ARDUINO_MOCK_DIR) $(CXXFLAGS) -c \
-		$(ARDUINO_MOCK_DIR)/arduino.cpp
+		$(ARDUINO_MOCK_DIR)/src/arduino.cc
 
-Serial.o: $(MOCK_SRCS_)
+serial.o : $(ARDUINO_MOCK_DIR)/include/arduino-mock/serial.h \
+		$(ARDUINO_MOCK_DIR)/src/serial.cc
 	$(CXX) $(CPPFLAGS) -I$(ARDUINO_MOCK_DIR) $(CXXFLAGS) -c \
-		$(ARDUINO_MOCK_DIR)/Serial.cpp
+		$(ARDUINO_MOCK_DIR)/src/serial.cc
+
+spark.o : $(ARDUINO_MOCK_DIR)/include/arduino-mock/spark.h \
+		$(ARDUINO_MOCK_DIR)/src/spark.cc
+	$(CXX) $(CPPFLAGS) -I$(ARDUINO_MOCK_DIR) $(CXXFLAGS) -c \
+		$(ARDUINO_MOCK_DIR)/src/spark.cc
 
 # Builds a test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-DigitalReadSerial_unittest.o : $(USER_DIR)/DigitalReadSerial_unittest.cc \
-				../DigitalReadSerial.ino \
+DigitalReadSerial_unittest.o : $(TEST_DIR)/DigitalReadSerial_unittest.cc \
+				$(TEST_DIR)/../DigitalReadSerial.ino \
 				$(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/DigitalReadSerial_unittest.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/DigitalReadSerial_unittest.cc
 
 DigitalReadSerial_unittest : DigitalReadSerial_unittest.o \
 				gmock_main.a  \
