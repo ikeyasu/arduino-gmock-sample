@@ -1,4 +1,5 @@
 // Copyright 2014 http://switchdevice.com
+// This example code is in the public domain.
 
 #include "gtest/gtest.h"
 #include "arduino-mock/Arduino.h"
