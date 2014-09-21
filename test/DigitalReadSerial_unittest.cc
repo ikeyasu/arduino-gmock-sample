@@ -17,6 +17,6 @@ TEST(loop, pushed) {
   EXPECT_CALL(*serialMock, println(1, 10));
   EXPECT_CALL(*arduinoMock, delay(1));
   loop();
-  delete serialMock;
-  delete arduinoMock;
+  releaseSerialMock();
+  releaseArduinoMock();
 }
