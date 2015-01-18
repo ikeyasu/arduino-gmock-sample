@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 #include "arduino-mock/Arduino.h"
 #include "arduino-mock/Serial.h"
-Serial_ Serial;
 
 #include "../DigitalReadSerial.ino"
 
