@@ -1,0 +1,10 @@
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+Testing/
+arduino_mock/
+arduino_mock_sample
+cmake_install.cmake
+dist/
