@@ -3,7 +3,8 @@ project(arduino_mock_builder C CXX)
 include(ExternalProject)
 
 ExternalProject_Add(arduino_mock
-    URL https://github.com/ikeyasu/arduino-mock/archive/0.0.1.zip
+    GIT_REPOSITORY https://github.com/ikeyasu/arduino-mock.git
+#    URL https://github.com/ikeyasu/arduino-mock/archive/0.0.1.zip
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/arduino_mock
     INSTALL_COMMAND ""
 )
